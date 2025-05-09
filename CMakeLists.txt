@@ -8,3 +8,5 @@ add_subdirectory(Win32.Minimal)
 if(MSVC)
     add_subdirectory(MFC.Minimal)
 endif()
+
+add_subdirectory(UWP.Minimal)
