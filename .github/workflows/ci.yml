@@ -1,0 +1,98 @@
+name: CI
+
+on: [push, pull_request, workflow_dispatch]
+
+concurrency:
+  group: environment-${{github.ref}}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    shell: bash
+
+jobs:
+  build:
+    name: ${{ matrix.platform.name }} ${{ matrix.type.name }}
+    runs-on: ${{ matrix.platform.os }}
+
+    strategy:
+      fail-fast: false
+      matrix:
+        platform:
+        - { name: Windows VS2019 x86,     os: windows-2019, flags: -GNinja }
+        - { name: Windows VS2019 x64,     os: windows-2019, flags: -GNinja }
+        - { name: Windows VS2022 x86,     os: windows-2022, flags: -GNinja }
+        - { name: Windows VS2022 x64,     os: windows-2022, flags: -GNinja }
+        - { name: Windows VS2022 arm64,   os: windows-2022, flags: -GNinja }
+        - { name: Windows VS2022 ClangCL, os: windows-2022, flags: -G"Visual Studio 17 2022" -TClangCL }
+        - { name: Windows MinGW x86,      os: windows-2022, flags: -GNinja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
+        - { name: Windows MinGW x64,      os: windows-2022, flags: -GNinja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
+        type:
+        - { name: Release }
+        - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug }
+    
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v4
+
+    - name: Set Visual Studio Architecture
+      if: contains(matrix.platform.name, 'Windows VS') && !contains(matrix.platform.name, 'MSBuild')
+      uses: ilammy/msvc-dev-cmd@v1
+      with:
+        arch: ${{ contains(matrix.platform.name, 'arm64') && 'amd64_arm64' || contains(matrix.platform.name, 'x86') && 'x86' || 'x64' }}
+
+    - name: Get CMake and Ninja
+      uses: lukka/get-cmake@latest
+      with:
+        cmakeVersion: '3.24'
+        ninjaVersion: latest
+
+    - name: Cache MinGW x86
+      if: matrix.platform.name == 'Windows MinGW x86'
+      id: mingw-x86-cache
+      uses: actions/cache@v4
+      with:
+        path: "C:\\Program Files\\mingw32"
+        key: winlibs-i686-posix-dwarf-gcc-15.1.0-mingw-w64ucrt-12.0.0-r1
+
+    - name: Install MinGW x86
+      if: matrix.platform.name == 'Windows MinGW x86' && steps.mingw-x86-cache.outputs.cache-hit != 'true'
+      run: |
+        curl -Lo mingw32.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/15.1.0posix-12.0.0-ucrt-r1/winlibs-i686-posix-dwarf-gcc-15.1.0-mingw-w64ucrt-12.0.0-r1.zip
+        unzip -qq -d "C:\Program Files" mingw32.zip
+
+    - name: Add MinGW x86 to PATH
+      if: matrix.platform.name == 'Windows MinGW x86'
+      run: |
+        echo "C:\Program Files\mingw32\bin" >> $GITHUB_PATH
+
+    - name: Cache MinGW x64
+      if: matrix.platform.name == 'Windows MinGW x64'
+      id: mingw-x64-cache
+      uses: actions/cache@v4
+      with:
+        path: "C:\\Program Files\\mingw64"
+        key: winlibs-x86_64-posix-seh-gcc-15.1.0-mingw-w64ucrt-12.0.0-r1
+
+    - name: Install MinGW x64
+      if: matrix.platform.name == 'Windows MinGW x64' && steps.mingw-x64-cache.outputs.cache-hit != 'true'
+      run: |
+        curl -Lo mingw64.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/15.1.0posix-12.0.0-ucrt-r1/winlibs-x86_64-posix-seh-gcc-15.1.0-mingw-w64ucrt-12.0.0-r1.zip
+        unzip -qq -d "C:\Program Files" mingw64.zip
+
+    - name: Add MinGW x64 to PATH
+      if: matrix.platform.name == 'Windows MinGW x64'
+      run: |
+        echo "C:\Program Files\mingw64\bin" >> $GITHUB_PATH
+
+    - name: Configure CMake
+      run: cmake -B build -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=WindowsUI ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
+
+    - name: Build
+      run: cmake --build build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
+
+    - name: Upload Artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: WindowsUI - ${{ matrix.platform.name }} ${{ matrix.type.name }}
+        path: WindowsUI
