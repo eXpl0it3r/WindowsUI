@@ -1,0 +1,2 @@
+#define IDB_BUTTON 101
+#define IDS_LABEL  201

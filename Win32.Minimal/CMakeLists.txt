@@ -14,6 +14,6 @@ else()
     target_link_options(${PROJECT_NAME} PRIVATE -Wl,--entry=mainCRTStartup)
 endif()
 
-target_compile_definitions(${PROJECT_NAME} PRIVATE UNICODE)
+target_compile_definitions(${PROJECT_NAME} PRIVATE UNICODE _UNICODE)
 
 install(TARGETS ${PROJECT_NAME} DESTINATION .)
