@@ -6,4 +6,4 @@ class Application : public CWinApp
 {
 public:
     BOOL InitInstance() override;
- };
+};

@@ -12,7 +12,7 @@ class Application
 
 public:
     Application();
-    void run();
+    void Run();
 
 private:
     static LRESULT CALLBACK HandleEventGlobally(HWND handle, UINT message, WPARAM wParam, LPARAM lParam);

@@ -18,7 +18,7 @@ Application::Application()
     m_button = CreateWindowEx(0, WC_BUTTON, L"DO NOT TOUCH", WS_CHILD | WS_VISIBLE, 75, 150, 150, 25, m_window, nullptr, nullptr, nullptr);
 }
 
-void Application::run()
+void Application::Run()
 {
     ShowWindow(m_window, SW_SHOW);
 
