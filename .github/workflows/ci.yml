@@ -28,7 +28,7 @@ jobs:
         - { name: Windows MinGW x86,      os: windows-2022, flags: -GNinja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
         - { name: Windows MinGW x64,      os: windows-2022, flags: -GNinja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
         type:
-        - { name: Release }
+        - { name: Release, flags: -DCMAKE_BUILD_TYPE=Release }
         - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug }
     
     steps:
