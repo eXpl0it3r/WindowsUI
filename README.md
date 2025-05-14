@@ -8,16 +8,28 @@ This repository tries to collect minimal examples for each UI framework / API an
 
 - [Win32.Minimal](Win32.Minimal/): A minimal example using the Win32 API
 - [MFC.Minimal](MFC.Minimal/): A minimal example using the MFC library
+- [WTL.Minimal](WTL.Minimal/): A minimal example using the WTL
 
 ## References
 
-- https://github.com/microsoftarchive/msdn-code-gallery-microsoft
-- https://github.com/Microsoft/Windows-classic-samples
-- https://github.com/microsoft/VCSamples
-- https://github.com/gammasoft71/Examples_Win32
-- https://github.com/fatrolls/MFC-Examples
-- [Programming Microsoft Visual C++ (1998) - David Kruglinski, Scot Wingo, George Shepherd](https://archive.org/details/programmingmicro00krug)
-- [Programming Windows with MFC (1999) - Jeff Prosise](https://archive.org/details/programmingwindo02edpros)
+### Win32
+
+- 💿 [MSDN Code Gallery Microsoft Samples](https://github.com/microsoftarchive/msdn-code-gallery-microsoft)
+- 💿 [Windows classic samples](https://github.com/Microsoft/Windows-classic-samples)
+- 💿 [VCSamples](https://github.com/microsoft/VCSamples)
+- 💿 [Win32 Examples](https://github.com/gammasoft71/Examples_Win32)
+- 📘 [Programming Windows (1999) - Charles Petzold](https://archive.org/details/programmingwindo0000petz_l2m9)
+- 📘 [Programming Microsoft Visual C++ (1998) - David Kruglinski, Scot Wingo, George Shepherd](https://archive.org/details/programmingmicro00krug)
+
+### MFC
+
+- 💿 [MFC Programming examples for C++](https://github.com/fatrolls/MFC-Examples)
+- 📘 [Programming Windows with MFC (1999) - Jeff Prosise](https://archive.org/details/programmingwindo02edpros)
+
+### WTL
+
+- 💿 [wtl-examples](https://github.com/wyrover/wtl-examples)
+- 🗒️ [WTL for MFC Programmers](https://www.codeproject.com/KB/wtl/wtl4mfc1.aspx)
 
 ## License
 

@@ -8,3 +8,8 @@ add_subdirectory(Win32.Minimal)
 if(MSVC)
     add_subdirectory(MFC.Minimal)
 endif()
+
+# MinGW has no WTL implementation
+if(MSVC)
+    add_subdirectory(WTL.Minimal)
+endif()

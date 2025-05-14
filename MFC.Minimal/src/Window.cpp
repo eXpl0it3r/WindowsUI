@@ -20,7 +20,7 @@ BOOL Window::OnEraseBkgnd(CDC* deviceContext)
     auto rect = CRect{};
     GetClientRect(&rect);
     
-    auto* brush = CBrush::FromHandle((HBRUSH)(COLOR_BTNFACE + 1));
+    auto* brush = CBrush::FromHandle(reinterpret_cast<HBRUSH>(COLOR_BTNFACE + 1));
     deviceContext->FillRect(&rect, brush);
     
     return TRUE;
