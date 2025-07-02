@@ -8,6 +8,7 @@ This repository tries to collect minimal examples for each UI framework / API an
 
 - [Win32.Minimal](Win32.Minimal/): A minimal example using the Win32 API
 - [MFC.Minimal](MFC.Minimal/): A minimal example using the MFC library
+- [ATL.Minimal](ATL.Minimal/): A minimal example using the ATL
 - [WTL.Minimal](WTL.Minimal/): A minimal example using the WTL
 
 ## References
@@ -25,6 +26,10 @@ This repository tries to collect minimal examples for each UI framework / API an
 
 - 💿 [MFC Programming examples for C++](https://github.com/fatrolls/MFC-Examples)
 - 📘 [Programming Windows with MFC (1999) - Jeff Prosise](https://archive.org/details/programmingwindo02edpros)
+
+### ATL
+
+- 🗒️ [WTL for MFC Programmers - ATL GUI Classes](https://www.codeproject.com/Articles/3841/WTL-for-MFC-Programmers-Part-I-ATL-GUI-Classes)
 
 ### WTL
 
