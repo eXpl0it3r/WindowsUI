@@ -19,14 +19,12 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows VS2019 x86,     os: windows-2019, flags: -GNinja }
-        - { name: Windows VS2019 x64,     os: windows-2019, flags: -GNinja }
-        - { name: Windows VS2022 x86,     os: windows-2022, flags: -GNinja }
-        - { name: Windows VS2022 x64,     os: windows-2022, flags: -GNinja }
-        - { name: Windows VS2022 arm64,   os: windows-2022, flags: -GNinja }
-        - { name: Windows VS2022 ClangCL, os: windows-2022, flags: -G"Visual Studio 17 2022" -TClangCL }
-        - { name: Windows MinGW x86,      os: windows-2022, flags: -GNinja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
-        - { name: Windows MinGW x64,      os: windows-2022, flags: -GNinja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
+        - { name: Windows VS2022 x86,     os: windows-2025, flags: -GNinja }
+        - { name: Windows VS2022 x64,     os: windows-2025, flags: -GNinja }
+        - { name: Windows VS2022 arm64,   os: windows-2025, flags: -GNinja }
+        - { name: Windows VS2022 ClangCL, os: windows-2025, flags: -G"Visual Studio 17 2022" -TClangCL }
+        - { name: Windows MinGW x86,      os: windows-2025, flags: -GNinja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
+        - { name: Windows MinGW x64,      os: windows-2025, flags: -GNinja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
         type:
         - { name: Release, flags: -DCMAKE_BUILD_TYPE=Release }
         - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug }
@@ -53,12 +51,12 @@ jobs:
       uses: actions/cache@v4
       with:
         path: "C:\\Program Files\\mingw32"
-        key: winlibs-i686-posix-dwarf-gcc-15.1.0-mingw-w64ucrt-12.0.0-r1
+        key: winlibs-i686-posix-dwarf-gcc-15.1.0-mingw-w64ucrt-13.0.0-r2
 
     - name: Install MinGW x86
       if: matrix.platform.name == 'Windows MinGW x86' && steps.mingw-x86-cache.outputs.cache-hit != 'true'
       run: |
-        curl -Lo mingw32.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/15.1.0posix-12.0.0-ucrt-r1/winlibs-i686-posix-dwarf-gcc-15.1.0-mingw-w64ucrt-12.0.0-r1.zip
+        curl -Lo mingw32.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/15.1.0posix-13.0.0-ucrt-r2/winlibs-i686-posix-dwarf-gcc-15.1.0-mingw-w64ucrt-13.0.0-r2.zip
         unzip -qq -d "C:\Program Files" mingw32.zip
 
     - name: Add MinGW x86 to PATH
@@ -72,12 +70,12 @@ jobs:
       uses: actions/cache@v4
       with:
         path: "C:\\Program Files\\mingw64"
-        key: winlibs-x86_64-posix-seh-gcc-15.1.0-mingw-w64ucrt-12.0.0-r1
+        key: winlibs-x86_64-posix-seh-gcc-15.1.0-mingw-w64ucrt-13.0.0-r2
 
     - name: Install MinGW x64
       if: matrix.platform.name == 'Windows MinGW x64' && steps.mingw-x64-cache.outputs.cache-hit != 'true'
       run: |
-        curl -Lo mingw64.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/15.1.0posix-12.0.0-ucrt-r1/winlibs-x86_64-posix-seh-gcc-15.1.0-mingw-w64ucrt-12.0.0-r1.zip
+        curl -Lo mingw64.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/15.1.0posix-13.0.0-ucrt-r2/winlibs-x86_64-posix-seh-gcc-15.1.0-mingw-w64ucrt-13.0.0-r2.zip
         unzip -qq -d "C:\Program Files" mingw64.zip
 
     - name: Add MinGW x64 to PATH
