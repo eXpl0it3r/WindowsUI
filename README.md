@@ -29,7 +29,7 @@ This repository tries to collect minimal examples for each UI framework / API an
 ### WTL
 
 - 💿 [wtl-examples](https://github.com/wyrover/wtl-examples)
-- 🗒️ [WTL for MFC Programmers](https://www.codeproject.com/KB/wtl/wtl4mfc1.aspx)
+- 🗒️ [WTL for MFC Programmers](https://www.codeproject.com/Articles/3841/WTL-for-MFC-Programmers-Part-I-ATL-GUI-Classes)
 
 ## License
 
