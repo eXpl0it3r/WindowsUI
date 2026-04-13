@@ -31,7 +31,7 @@ jobs:
     
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v4
+      uses: actions/checkout@v6
 
     - name: Set Visual Studio Architecture
       if: contains(matrix.platform.name, 'Windows VS') && !contains(matrix.platform.name, 'MSBuild')
@@ -42,21 +42,21 @@ jobs:
     - name: Get CMake and Ninja
       uses: lukka/get-cmake@latest
       with:
-        cmakeVersion: '3.24'
+        cmakeVersion: '3.26'
         ninjaVersion: latest
 
     - name: Cache MinGW x86
       if: matrix.platform.name == 'Windows MinGW x86'
       id: mingw-x86-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: "C:\\Program Files\\mingw32"
-        key: winlibs-i686-posix-dwarf-gcc-15.1.0-mingw-w64ucrt-13.0.0-r2
+        key: winlibs-i686-posix-dwarf-gcc-15.2.0-mingw-w64ucrt-14.0.0-r7
 
     - name: Install MinGW x86
       if: matrix.platform.name == 'Windows MinGW x86' && steps.mingw-x86-cache.outputs.cache-hit != 'true'
       run: |
-        curl -Lo mingw32.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/15.1.0posix-13.0.0-ucrt-r2/winlibs-i686-posix-dwarf-gcc-15.1.0-mingw-w64ucrt-13.0.0-r2.zip
+        curl -Lo mingw32.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/15.2.0posix-14.0.0-ucrt-r7/winlibs-i686-posix-dwarf-gcc-15.2.0-mingw-w64ucrt-14.0.0-r7.zip
         unzip -qq -d "C:\Program Files" mingw32.zip
 
     - name: Add MinGW x86 to PATH
@@ -67,15 +67,15 @@ jobs:
     - name: Cache MinGW x64
       if: matrix.platform.name == 'Windows MinGW x64'
       id: mingw-x64-cache
-      uses: actions/cache@v4
+      uses: actions/cache@v5
       with:
         path: "C:\\Program Files\\mingw64"
-        key: winlibs-x86_64-posix-seh-gcc-15.1.0-mingw-w64ucrt-13.0.0-r2
+        key: winlibs-x86_64-posix-seh-gcc-15.2.0-mingw-w64ucrt-14.0.0-r7
 
     - name: Install MinGW x64
       if: matrix.platform.name == 'Windows MinGW x64' && steps.mingw-x64-cache.outputs.cache-hit != 'true'
       run: |
-        curl -Lo mingw64.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/15.1.0posix-13.0.0-ucrt-r2/winlibs-x86_64-posix-seh-gcc-15.1.0-mingw-w64ucrt-13.0.0-r2.zip
+        curl -Lo mingw64.zip https://github.com/brechtsanders/winlibs_mingw/releases/download/15.2.0posix-14.0.0-ucrt-r7/winlibs-x86_64-posix-seh-gcc-15.2.0-mingw-w64ucrt-14.0.0-r7.zip
         unzip -qq -d "C:\Program Files" mingw64.zip
 
     - name: Add MinGW x64 to PATH
@@ -90,7 +90,7 @@ jobs:
       run: cmake --build build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
 
     - name: Upload Artifact
-      uses: actions/upload-artifact@v4
+      uses: actions/upload-artifact@v7
       with:
         name: WindowsUI - ${{ matrix.platform.name }} ${{ matrix.type.name }}
         path: WindowsUI
