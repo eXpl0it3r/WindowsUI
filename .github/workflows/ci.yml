@@ -2,8 +2,11 @@ name: CI
 
 on: [push, pull_request, workflow_dispatch]
 
+permissions:
+  contents: read
+
 concurrency:
-  group: environment-${{github.ref}}
+  group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
 defaults:
@@ -19,19 +22,21 @@ jobs:
       fail-fast: false
       matrix:
         platform:
-        - { name: Windows VS2022 x86,     os: windows-2025, flags: -GNinja }
-        - { name: Windows VS2022 x64,     os: windows-2025, flags: -GNinja }
-        - { name: Windows VS2022 arm64,   os: windows-2025, flags: -GNinja }
-        - { name: Windows VS2022 ClangCL, os: windows-2025, flags: -G"Visual Studio 17 2022" -TClangCL }
-        - { name: Windows MinGW x86,      os: windows-2025, flags: -GNinja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
-        - { name: Windows MinGW x64,      os: windows-2025, flags: -GNinja -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
+        - { name: Windows VS2026 x86,     os: windows-2025, generator: Ninja }
+        - { name: Windows VS2026 x64,     os: windows-2025, generator: Ninja }
+        - { name: Windows VS2026 arm64,   os: windows-2025, generator: Ninja }
+        - { name: Windows VS2026 ClangCL, os: windows-2025, generator: Visual Studio 18 2026, flags: -TClangCL }
+        - { name: Windows MinGW x86,      os: windows-2025, generator: Ninja, flags: -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
+        - { name: Windows MinGW x64,      os: windows-2025, generator: Ninja, flags: -DCMAKE_C_COMPILER=gcc -DCMAKE_CXX_COMPILER=g++ }
         type:
         - { name: Release, flags: -DCMAKE_BUILD_TYPE=Release }
         - { name: Debug, flags: -DCMAKE_BUILD_TYPE=Debug }
-    
+
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v6
+      uses: actions/checkout@v7
+      with:
+        persist-credentials: false
 
     - name: Set Visual Studio Architecture
       if: contains(matrix.platform.name, 'Windows VS') && !contains(matrix.platform.name, 'MSBuild')
@@ -40,15 +45,15 @@ jobs:
         arch: ${{ contains(matrix.platform.name, 'arm64') && 'amd64_arm64' || contains(matrix.platform.name, 'x86') && 'x86' || 'x64' }}
 
     - name: Get CMake and Ninja
-      uses: lukka/get-cmake@latest
+      uses: lukka/get-cmake@v4.4.2
       with:
-        cmakeVersion: '3.26'
+        cmakeVersion: '4.4'
         ninjaVersion: latest
 
     - name: Cache MinGW x86
       if: matrix.platform.name == 'Windows MinGW x86'
       id: mingw-x86-cache
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: "C:\\Program Files\\mingw32"
         key: winlibs-i686-posix-dwarf-gcc-15.2.0-mingw-w64ucrt-14.0.0-r7
@@ -62,12 +67,12 @@ jobs:
     - name: Add MinGW x86 to PATH
       if: matrix.platform.name == 'Windows MinGW x86'
       run: |
-        echo "C:\Program Files\mingw32\bin" >> $GITHUB_PATH
+        echo "C:\Program Files\mingw32\bin" >> "$GITHUB_PATH"
 
     - name: Cache MinGW x64
       if: matrix.platform.name == 'Windows MinGW x64'
       id: mingw-x64-cache
-      uses: actions/cache@v5
+      uses: actions/cache@v6
       with:
         path: "C:\\Program Files\\mingw64"
         key: winlibs-x86_64-posix-seh-gcc-15.2.0-mingw-w64ucrt-14.0.0-r7
@@ -81,13 +86,18 @@ jobs:
     - name: Add MinGW x64 to PATH
       if: matrix.platform.name == 'Windows MinGW x64'
       run: |
-        echo "C:\Program Files\mingw64\bin" >> $GITHUB_PATH
+        echo "C:\Program Files\mingw64\bin" >> "$GITHUB_PATH"
 
     - name: Configure CMake
-      run: cmake -B build -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=WindowsUI ${{matrix.platform.flags}} ${{matrix.config.flags}} ${{matrix.type.flags}}
+      env:
+        CMAKE_GENERATOR: ${{ matrix.platform.generator }}
+        CMAKE_FLAGS: ${{ matrix.platform.flags }} ${{ matrix.type.flags }}
+      run: cmake -B build -DCMAKE_VERBOSE_MAKEFILE=ON -DCMAKE_INSTALL_PREFIX=WindowsUI $CMAKE_FLAGS
 
     - name: Build
-      run: cmake --build build --config ${{ matrix.type.name == 'Debug' && 'Debug' || 'Release' }} --target install
+      env:
+        BUILD_TYPE: ${{ matrix.type.name }}
+      run: cmake --build build --config "$BUILD_TYPE" --target install
 
     - name: Upload Artifact
       uses: actions/upload-artifact@v7
